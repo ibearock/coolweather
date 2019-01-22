@@ -6,8 +6,8 @@ public class City extends LitePalSupport {
 
     private int id;
     private String cityName;
-    private int cityCode;
-    private int privinceId;
+    private String cityCode;
+    private String parentCode;
 
     public int getId() {
         return id;
@@ -25,19 +25,19 @@ public class City extends LitePalSupport {
         this.cityName = cityName;
     }
 
-    public int getCityCode() {
+    public String getCityCode() {
         return cityCode;
     }
 
-    public void setCityCode(int cityCode) {
+    public void setCityCode(String cityCode) {
         this.cityCode = cityCode;
     }
 
-    public int getPrivinceId() {
-        return privinceId;
+    public String getParentCode() {
+        return parentCode;
     }
 
-    public void setPrivinceId(int privinceId) {
-        this.privinceId = privinceId;
+    public void setParentCode(String parentCode) {
+        this.parentCode = parentCode;
     }
 }

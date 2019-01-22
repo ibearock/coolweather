@@ -6,7 +6,7 @@ public class Province extends LitePalSupport {
 
     private int id;
     private String provinceName;
-    private inte provinceCode;
+    private String provinceCode;
 
     public int getId() {
         return id;
@@ -24,11 +24,12 @@ public class Province extends LitePalSupport {
         this.provinceName = provinceName;
     }
 
-    public inte getProvinceCode() {
+
+    public String getProvinceCode() {
         return provinceCode;
     }
 
-    public void setProvinceCode(inte provinceCode) {
+    public void setProvinceCode(String provinceCode) {
         this.provinceCode = provinceCode;
     }
 }
