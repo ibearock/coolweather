@@ -77,6 +77,12 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
                     queryCountes();
+                } else if (currentLevel == LEVEL_COUNTY){
+                    String name = countyList.get(position).getCountyName();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("name", name);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
 
             }

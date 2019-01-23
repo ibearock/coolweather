@@ -2,9 +2,11 @@ package com.ibearock.coolweather.util;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.ibearock.coolweather.db.City;
 import com.ibearock.coolweather.db.County;
 import com.ibearock.coolweather.db.Province;
+import com.ibearock.coolweather.gson.Weather;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,6 +73,15 @@ public class Utility {
             e.printStackTrace();
             return false;
         }
+    }
 
+    // 返回weather实体
+    public static Weather handleWeatherResponse(String response){
+        try{
+            return new Gson().fromJson(response, Weather.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  null;
     }
 }
