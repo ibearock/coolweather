@@ -10,11 +10,15 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -43,7 +47,9 @@ import okhttp3.Response;
 
 public class WeatherActivity extends AppCompatActivity {
 
-    private ImageView bingPicImg;
+    public SwipeRefreshLayout swipeRefreshLayout;
+    public DrawerLayout drawerLayout;
+    private Button navButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +63,33 @@ public class WeatherActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_weather);
 
+        loadRefreshLayout();
         loadWeatherInfo();
         loadBingPic();
+        loaDrawLayout();
+    }
+
+    private void loaDrawLayout() {
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navButton = (Button) findViewById(R.id.nav_button);
+        navButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+    }
+
+    private void loadRefreshLayout() {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                String locationName = getIntent().getStringExtra("name");
+                requestWeather(locationName);
+            }
+        });
     }
 
     private void loadWeatherInfo() {
@@ -76,12 +107,12 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void loadBingPic() {
 
-        bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
+        ImageView bingPicImg = (ImageView) findViewById(R.id.bing_pic_img);
         String requestBingPic = "https://cn.bing.com//az/hprichbg/rb/ApfelTag_ZH-CN7906570680_1920x1080.jpg";
         Glide.with(WeatherActivity.this).load(requestBingPic).into(bingPicImg);
     }
 
-    private void requestWeather(String locationName) {
+    public void requestWeather(String locationName) {
         String weatherUrl = "http://wthrcdn.etouch.cn/weather_mini?city=" + locationName;
         HttpUtil.sendOKhttpRequest(weatherUrl, new Callback(){
 
@@ -100,6 +131,7 @@ public class WeatherActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
                         }
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
@@ -111,6 +143,7 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
             }
