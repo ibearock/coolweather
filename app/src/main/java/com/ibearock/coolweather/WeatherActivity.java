@@ -1,6 +1,7 @@
 package com.ibearock.coolweather;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.ibearock.coolweather.gson.Forecast;
 import com.ibearock.coolweather.gson.Weather;
+import com.ibearock.coolweather.service.AutoUpdateService;
 import com.ibearock.coolweather.util.HttpUtil;
 import com.ibearock.coolweather.util.Utility;
 
@@ -64,7 +66,7 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
 
         loadRefreshLayout();
-        loadWeatherInfo();
+        loadWeatherInfo(false);
         loadBingPic();
         loaDrawLayout();
     }
@@ -86,23 +88,28 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                String locationName = getIntent().getStringExtra("name");
-                requestWeather(locationName);
+                loadWeatherInfo(true);
             }
         });
     }
 
-    private void loadWeatherInfo() {
+    private void loadWeatherInfo(Boolean isReflash) {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = prefs.getString("weather", null);
         if (weatherString != null){
             Weather weather = Utility.handleWeatherResponse(weatherString);
-            showWeatherInfo(weather);
+            if (isReflash) {
+                requestWeather(weather.data.city);
+            } else {
+                showWeatherInfo(weather);
+            }
         } else {
             String locationName = getIntent().getStringExtra("name");
             requestWeather(locationName);
         }
+        Intent intent = new Intent(WeatherActivity.this, AutoUpdateService.class);
+        startService(intent);
     }
 
     private void loadBingPic() {
